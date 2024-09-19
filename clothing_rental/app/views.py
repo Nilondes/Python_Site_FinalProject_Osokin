@@ -1,8 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
-
-
-from .forms import RegistrationForm
+from .forms import RegistrationForm, AdForm
+from .models import Ad
 
 
 def home(request):
@@ -44,3 +43,28 @@ def user_login(request):
             return render(request, 'registration/login.html', {'error_message': 'Invalid login'})
     else:
         return render(request, 'registration/login.html')
+
+
+def create_ad(request):
+    if request.method == 'POST':
+        form = AdForm(request.POST, request.FILES)
+        if form.is_valid():
+            ad = form.save(commit=False)
+            ad.user = request.user
+            ad.save()
+            ad.category.set(form.cleaned_data['category'])
+            return redirect('home')
+    else:
+        form = AdForm()
+    return render(request, 'ads/create_ad.html', {'form': form})
+
+
+def approve_ad(request):
+    ads = Ad.objects.filter(is_approved=False)
+    if request.method == 'POST':
+        for ad in ads:
+            if str(ad.id) in request.POST:
+                ad.is_approved = True
+                ad.save()
+        return redirect('home')
+    return render(request, 'ads/approve_ad.html', {'ads': ads})

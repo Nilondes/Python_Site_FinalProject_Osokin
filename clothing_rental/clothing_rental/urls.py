@@ -17,10 +17,8 @@ Including another URLconf
 from django.contrib import admin
 from django.shortcuts import render
 from django.urls import path
-from app.views import register, user_login, home, about, contact
+from app.views import register, user_login, home, about, contact, create_ad, approve_ad
 
-def home_view(request):
-    return render(request, 'home.html')
 
 urlpatterns = [
     path('', home, name='home'),
@@ -28,5 +26,7 @@ urlpatterns = [
     path('contact/', contact, name='contact'),
     path('register/', register, name='register'),
     path('login/', user_login, name='login'),
+    path('create_ad/', create_ad, name='create_ad'),
+    path('approve_ad/', approve_ad, name='approve_ad'),
     path('admin/', admin.site.urls),
 ]
