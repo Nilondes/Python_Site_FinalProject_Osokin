@@ -1,11 +1,17 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, logout
 from .forms import RegistrationForm, AdForm
 from .models import Ad
+from django.contrib.auth.models import User
 
 
 def home(request):
-    return render(request, 'home.html')
+    try:
+        staff = User.objects.get(username=request.user).is_staff
+        context = {'is_staff': staff}
+    except Exception:
+        context = {'is_staff': False}
+    return render(request, 'home.html', context)
 
 
 def about(request):
@@ -45,6 +51,12 @@ def user_login(request):
         return render(request, 'registration/login.html')
 
 
+def user_logout(request):
+    if request.method == 'POST':
+        logout(request)
+    return render(request, 'home.html')
+
+
 def create_ad(request):
     if request.method == 'POST':
         form = AdForm(request.POST, request.FILES)
@@ -59,12 +71,42 @@ def create_ad(request):
     return render(request, 'ads/create_ad.html', {'form': form})
 
 
-def approve_ad(request):
-    ads = Ad.objects.filter(is_approved=False)
-    if request.method == 'POST':
-        for ad in ads:
-            if str(ad.id) in request.POST:
-                ad.is_approved = True
-                ad.save()
+def pending_ads(request):
+    user = User.objects.get(username=request.user)
+    if not user.is_staff:
         return redirect('home')
+
+    ads = Ad.objects.filter(is_approved=False)
     return render(request, 'ads/approve_ad.html', {'ads': ads})
+
+
+def approve_ad(request, pk):
+    user = User.objects.get(username=request.user)
+    if not user.is_staff:
+        return redirect('home')
+    ad = Ad.objects.get(pk=pk)
+    ad.is_approved = True
+    ad.save()
+    return redirect('pending_ads')
+
+
+def view_user_ads(request):
+    ads = Ad.objects.for_user(request.user)
+    context = {'ads': ads}
+    return render(request, 'ads/user_ads.html', context)
+
+
+def remove_ad(request, pk):
+    ad = Ad.objects.get_queryset().filter(id=pk)
+    ad.delete()
+    return redirect('user_ads')
+
+
+# def edit_ad(request, pk):
+#     ad = Ad.objects.get_queryset().filter(id=pk)
+#     ad.save()
+#     return redirect('user_ads')
+
+
+#TODO: edit ad
+#TODO: order ad

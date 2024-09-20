@@ -1,0 +1,24 @@
+{% extends 'back.html' %}
+{% block extend_title %}
+<title>Approve ad</title>
+{% endblock %}
+{% block back %}
+<body>
+{% if ads %}
+{% for ad in ads %}
+<ul>
+    <li>
+        <p> {{ ad.name }}</p>
+        <p><img src="{{ ad.image.url }}" style="width:400px;height:400px;"></p>
+
+        <p> {{ ad.description }}</p>
+    </li>
+</ul>
+<input type="button" value="Approve" onclick="location.href='{% url 'approve_ad' ad.id %}'">
+<br>
+{% endfor %}
+{% else %}
+There are no pending ads
+{% endif %}
+</body>
+{% endblock %}

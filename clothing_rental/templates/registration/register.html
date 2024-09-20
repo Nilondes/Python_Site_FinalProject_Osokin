@@ -1,9 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Register</title>
-</head>
+{% extends 'back.html' %}
+{% block extend_title %}
+<title>Register</title>
+{% endblock %}
+{% block back %}
 <body>
   <form method="post">
     {% csrf_token %}
@@ -11,4 +10,4 @@
     <input type="submit" value="Register">
   </form>
 </body>
-</html>
+{% endblock %}

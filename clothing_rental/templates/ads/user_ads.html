@@ -1,0 +1,31 @@
+{% extends 'back.html' %}
+{% block extend_title %}
+<title>My ads</title>
+{% endblock %}
+{% block back %}
+<body>
+<h1>My ads</h1>
+{% if ads %}
+{% for ad in ads %}
+<ul>
+    <li>
+        <p> {{ ad.name }}</p>
+        <p><img src="{{ ad.image.url }}" style="width:400px;height:400px;"></p>
+        <p> $ {{ ad.price }}</p>
+        <p> {{ ad.description }}</p>
+        <p> {{ ad.start_date }} - {{ ad.end_date }}</p>
+        {% if not ad.is_approved %}
+        <p> Pending moderation </p>
+        {% endif %}
+        <br>
+        <input type="button" value="Remove" onclick="location.href='{% url 'remove_ad' ad.id %}'">
+    </li>
+</ul>
+
+<br>
+{% endfor %}
+{% else %}
+There are no ads
+{% endif %}
+</body>
+{% endblock %}

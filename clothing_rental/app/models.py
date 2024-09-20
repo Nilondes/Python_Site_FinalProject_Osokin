@@ -2,6 +2,11 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
+class AdManager(models.Manager):
+    def for_user(self, user):
+        return self.get_queryset().filter(user=user)
+
+
 class Ad(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField()
@@ -15,6 +20,7 @@ class Ad(models.Model):
     phone = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
     is_approved = models.BooleanField(default=False)
+    objects = AdManager()
 
     def __str__(self):
         return self.name

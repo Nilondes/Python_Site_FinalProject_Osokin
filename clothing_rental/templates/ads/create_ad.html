@@ -1,17 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Create ad</title>
-</head>
+{% extends 'back.html' %}
+{% block extend_title %}
+<title>Create ad</title>
+{% endblock %}
+{% block back %}
 <body>
-<h1>Add to cart</h1>
+<h1>Create ad</h1>
 <form enctype="multipart/form-data" method="post" action="{% url 'create_ad' %}">
     {% csrf_token %}
     {{ form.as_p }}
     <input type="submit" value="Create">
 </form>
-<br>
-<input type="button" value="Back" onclick="location.href='{% url 'home' %}'">
 </body>
-</html>
+{% endblock %}
