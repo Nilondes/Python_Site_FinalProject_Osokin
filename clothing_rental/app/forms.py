@@ -1,9 +1,12 @@
+from email.policy import default
+
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.forms import DateInput, CheckboxSelectMultiple
+from django.template.smartif import infix
 
-from .models import Ad
+from .models import Ad, Category
 
 
 class RegistrationForm(UserCreationForm):
@@ -61,3 +64,8 @@ class AdForm(forms.ModelForm):
         }
 
 
+class SearchAdForm(forms.Form):
+    categories = forms.ModelMultipleChoiceField(widget=CheckboxSelectMultiple, queryset=Category.objects.all(), required=False)
+    min_price = forms.DecimalField(max_digits=7, decimal_places=2, required=False)
+    max_price = forms.DecimalField(max_digits=7, decimal_places=2, required=False)
+    keywords = forms.CharField(max_length=255, required=False)

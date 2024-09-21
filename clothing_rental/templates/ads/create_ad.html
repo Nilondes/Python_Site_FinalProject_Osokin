@@ -5,10 +5,10 @@
 {% block back %}
 <body>
 <h1>Create ad</h1>
-<form enctype="multipart/form-data" method="post" action="{% url 'create_ad' %}">
+<form enctype="multipart/form-data" method="post" >
     {% csrf_token %}
     {{ form.as_p }}
-    <input type="submit" value="Create">
+    <input type="submit" value="Save">
 </form>
 </body>
 {% endblock %}

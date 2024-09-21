@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
-from .forms import RegistrationForm, AdForm
-from .models import Ad
+from .forms import RegistrationForm, AdForm, SearchAdForm
+from .models import Ad, Category
 from django.contrib.auth.models import User
+from django.db.models import Q
 
 
 def home(request):
@@ -52,12 +53,16 @@ def user_login(request):
 
 
 def user_logout(request):
+    if not request.user.is_authenticated:
+        return redirect('home')
     if request.method == 'POST':
         logout(request)
     return render(request, 'home.html')
 
 
 def create_ad(request):
+    if not request.user.is_authenticated:
+        return redirect('home')
     if request.method == 'POST':
         form = AdForm(request.POST, request.FILES)
         if form.is_valid():
@@ -72,6 +77,8 @@ def create_ad(request):
 
 
 def pending_ads(request):
+    if not request.user.is_authenticated:
+        return redirect('home')
     user = User.objects.get(username=request.user)
     if not user.is_staff:
         return redirect('home')
@@ -81,6 +88,8 @@ def pending_ads(request):
 
 
 def approve_ad(request, pk):
+    if not request.user.is_authenticated:
+        return redirect('home')
     user = User.objects.get(username=request.user)
     if not user.is_staff:
         return redirect('home')
@@ -91,22 +100,65 @@ def approve_ad(request, pk):
 
 
 def view_user_ads(request):
+    if not request.user.is_authenticated:
+        return redirect('home')
     ads = Ad.objects.for_user(request.user)
     context = {'ads': ads}
     return render(request, 'ads/user_ads.html', context)
 
 
 def remove_ad(request, pk):
+    if not request.user.is_authenticated:
+        return redirect('home')
     ad = Ad.objects.get_queryset().filter(id=pk)
+    if ad.user != request.user:
+        return redirect('home')
     ad.delete()
     return redirect('user_ads')
 
 
-# def edit_ad(request, pk):
-#     ad = Ad.objects.get_queryset().filter(id=pk)
-#     ad.save()
-#     return redirect('user_ads')
+def edit_ad(request, pk):
+    if not request.user.is_authenticated:
+        return redirect('home')
+    ad = Ad.objects.get(pk=pk)
+    if ad.user != request.user:
+        return redirect('home')
+    if request.method == 'POST':
+        form = AdForm(request.POST, request.FILES, instance=ad)
+        if form.is_valid():
+            ad = form.save(commit=False)
+            ad.is_approved=False
+            ad.save()
+            ad.category.set(form.cleaned_data['category'])
+            return redirect('user_ads')
+    else:
+        form = AdForm(instance=ad)
+    return render(request, 'ads/create_ad.html', {'form': form})
 
 
-#TODO: edit ad
+def search_ads(request):
+    if not request.user.is_authenticated:
+        return redirect('home')
+    if request.method == 'POST':
+        form = SearchAdForm(request.POST)
+        if form.is_valid():
+            categories = form.cleaned_data['categories'] if form.cleaned_data['categories'] else Category.objects.all()
+            min_price = form.cleaned_data['min_price'] if form.cleaned_data['min_price'] else 0
+            max_price = form.cleaned_data['max_price'] if form.cleaned_data['max_price'] else 99999.99
+            keywords = form.cleaned_data['keywords'] if form.cleaned_data['keywords'] else ''
+            ads = (Ad.objects
+                   .filter(is_approved=True,
+                           category__in=categories,
+                           price__gte=min_price,
+                           price__lte=max_price)
+                   .filter(Q(name__icontains=keywords) | Q(description__icontains=keywords))
+                   .distinct())
+            context = {'ads': ads, 'form': form}
+            return render(request, 'ads/search_ads.html', context)
+    else:
+        form = SearchAdForm()
+    return render(request, 'ads/search_ads.html', {'form': form})
+
+
+#TODO: figure out min and max price and multiple categories
 #TODO: order ad

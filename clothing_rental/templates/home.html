@@ -7,6 +7,8 @@
 <h1>Greetings!</h1>
 {% if request.user.is_authenticated %}
 <br>
+<input type="button" value="Search ads" onclick="location.href='{% url 'search_ads' %}'">
+<br>
 <input type="button" value="My ads" onclick="location.href='{% url 'user_ads' %}'">
 <br>
 <input type="button" value="Create ad" onclick="location.href='{% url 'create_ad' %}'">
