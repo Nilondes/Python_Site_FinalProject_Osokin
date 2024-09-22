@@ -31,7 +31,11 @@ from app.views import (register,
                        view_user_ads,
                        remove_ad,
                        edit_ad,
-                       search_ads)
+                       search_ads,
+                       view_ad,
+                       pending_comments,
+                       approve_comment,
+                       order_ad)
 
 
 urlpatterns = [
@@ -48,6 +52,10 @@ urlpatterns = [
     path('user_ads/<int:pk>', edit_ad, name='edit_ad'),
     path('remove_ad/<int:pk>', remove_ad, name='remove_ad'),
     path('search_ads/', search_ads, name='search_ads'),
+    path('search_ads/<int:pk>', view_ad, name='view_ad'),
+    path('search_ads/<int:pk>/order_ad', order_ad, name='order_ad'),
+    path('pending_comments/', pending_comments, name='pending_comments'),
+    path('pending_comments/<int:pk>', approve_comment, name='approve_comment'),
     path('admin/', admin.site.urls),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

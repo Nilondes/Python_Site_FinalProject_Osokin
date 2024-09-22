@@ -1,0 +1,13 @@
+{% extends 'back.html' %}
+{% block extend_title %}
+<title>{{ ad.name }}</title>
+{% endblock %}
+{% block back %}
+<body>
+<form enctype="multipart/form-data" method="post" >
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Place order">
+</form>
+</body>
+{% endblock %}

@@ -17,15 +17,10 @@
         <p> {{ ad.name }}</p>
         <p><img src="{{ ad.image.url }}" style="width:400px;height:400px;"></p>
         <p> $ {{ ad.price }}</p>
-        <p> {{ ad.description }}</p>
         <p> {{ ad.start_date }} - {{ ad.end_date }}</p>
-        {% if not ad.is_approved %}
-        <p> Pending moderation </p>
-        {% endif %}
         <br>
-        <input type="button" value="Edit" onclick="location.href='{% url 'edit_ad' ad.id %}'">
-        <br>
-        <input type="button" value="Remove" onclick="location.href='{% url 'remove_ad' ad.id %}'">
+        <input type="button" value="View ad" onclick="location.href='{% url 'view_ad' ad.id %}'">
+
     </li>
 </ul>
 

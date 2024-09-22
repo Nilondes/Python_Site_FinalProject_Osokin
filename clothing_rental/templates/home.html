@@ -15,6 +15,8 @@
 {% if is_staff %}
 <br>
 <input type="button" value="Pending ads" onclick="location.href='{% url 'pending_ads' %}'">
+<br>
+<input type="button" value="Pending comments" onclick="location.href='{% url 'pending_comments' %}'">
 {% endif %}
 
 <form method="post" action="{% url 'logout' %}">

@@ -4,9 +4,8 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.forms import DateInput, CheckboxSelectMultiple
-from django.template.smartif import infix
 
-from .models import Ad, Category
+from .models import Ad, Category, AdComments, Order
 
 
 class RegistrationForm(UserCreationForm):
@@ -68,4 +67,37 @@ class SearchAdForm(forms.Form):
     categories = forms.ModelMultipleChoiceField(widget=CheckboxSelectMultiple, queryset=Category.objects.all(), required=False)
     min_price = forms.DecimalField(max_digits=7, decimal_places=2, required=False)
     max_price = forms.DecimalField(max_digits=7, decimal_places=2, required=False)
-    keywords = forms.CharField(max_length=255, required=False)
+    keywords = forms.CharField(max_length=255, required=False, help_text='List keywords separated by spaces, that are present in name or description')
+
+
+class CommentAdForm(forms.ModelForm):
+    class Meta:
+        model = AdComments
+        fields = [
+            'comment'
+        ]
+
+
+class OrderForm(forms.ModelForm):
+    class Meta:
+        model = Order
+        fields = [
+            'start_date',
+            'end_date',
+            'quantity',
+            'comment'
+        ]
+        widgets = {
+            'start_date':
+                DateInput(attrs={
+                    'class': 'form-control',
+                    'type': 'date'
+                }
+                ),
+            'end_date':
+                DateInput(attrs={
+                    'class': 'form-control',
+                    'type': 'date'
+                })
+
+        }
