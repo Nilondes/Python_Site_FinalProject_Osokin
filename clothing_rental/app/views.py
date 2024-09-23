@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
 from .forms import RegistrationForm, AdForm, SearchAdForm, CommentAdForm, OrderForm
-from .models import Ad, Category, AdComments, Order
+from .models import Ad, Category, AdComments, Order, Transaction
 from django.contrib.auth.models import User
 from django.db.models import Q
 from functools import reduce
@@ -212,10 +212,15 @@ def order_ad(request, pk):
     if request.method == 'POST':
         form = OrderForm(request.POST)
         if form.is_valid():
+            if ad.start_date > form.cleaned_data['start_date'] or ad.end_date < form.cleaned_data['end_date']:
+                message = f'The dates must be in range {ad.start_date} - {ad.end_date}'
+                context = {'form': form, 'message': message}
+                return render(request, 'ads/order_ad.html', context)
             order = form.save(commit=False)
             order.ad = ad
             order.user = request.user
             order.save()
+            transaction = Transaction.objects.create(user=request.user, order=order, total_price=order.quantity*ad.price)
             return redirect('view_ad', pk)
     else:
         form = OrderForm()
@@ -223,7 +228,5 @@ def order_ad(request, pk):
     return render(request, 'ads/order_ad.html', context)
 
 
-
-#TODO: order ad min max date?
 #TODO: Tests
 #TODO: Docker
