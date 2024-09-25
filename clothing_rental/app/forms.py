@@ -2,9 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.forms import DateInput, CheckboxSelectMultiple
-
 from .models import Ad, Category, AdComments, Order
-from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 class RegistrationForm(UserCreationForm):
@@ -75,7 +73,6 @@ class CommentAdForm(forms.ModelForm):
         fields = [
             'comment'
         ]
-
 
 
 class OrderForm(forms.ModelForm):

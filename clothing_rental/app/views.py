@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
 from .forms import RegistrationForm, AdForm, SearchAdForm, CommentAdForm, OrderForm
-from .models import Ad, Category, AdComments, Order, Transaction
+from .models import Ad, Category, AdComments, Transaction
 from django.contrib.auth.models import User
 from django.db.models import Q
 from functools import reduce
@@ -135,7 +135,7 @@ def view_user_ads(request):
 def remove_ad(request, pk):
     if not request.user.is_authenticated:
         return redirect('home')
-    ad = Ad.objects.get_queryset().filter(id=pk)
+    ad = Ad.objects.get(pk=pk)
     if ad.user != request.user:
         return redirect('home')
     ad.delete()
@@ -171,13 +171,13 @@ def search_ads(request):
             min_price = form.cleaned_data['min_price'] if form.cleaned_data['min_price'] else 0
             max_price = form.cleaned_data['max_price'] if form.cleaned_data['max_price'] else 99999.99
             keywords = form.cleaned_data['keywords'].split() if form.cleaned_data['keywords'] else ['']
-            keqword_q = reduce(operator.or_, (Q(name__icontains=keyword) | Q(description__icontains=keyword) for keyword in keywords))
+            keyword_q = reduce(operator.or_, (Q(name__icontains=keyword) | Q(description__icontains=keyword) for keyword in keywords))
             ads = (Ad.objects
                    .filter(is_approved=True,
                            category__in=categories,
                            price__gte=min_price,
                            price__lte=max_price)
-                   .filter(keqword_q)
+                   .filter(keyword_q)
                    .distinct())
             context = {'ads': ads, 'form': form}
             return render(request, 'ads/search_ads.html', context)
@@ -228,5 +228,4 @@ def order_ad(request, pk):
     return render(request, 'ads/order_ad.html', context)
 
 
-#TODO: Tests
 #TODO: Docker
