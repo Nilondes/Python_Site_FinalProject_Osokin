@@ -1,0 +1,33 @@
+{% extends 'back.html' %}
+{% block extend_title %}
+<title>Search ads</title>
+{% endblock %}
+{% block back %}
+<body>
+<h3>Search filters</h3>
+<form enctype="multipart/form-data" method="post" >
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Search">
+</form>
+{% if ads %}
+{% for ad in ads %}
+<ul>
+    <li>
+        <p> {{ ad.name }}</p>
+        <p><img src="{{ ad.image.url }}" style="width:400px;height:400px;"></p>
+        <p> $ {{ ad.price }}</p>
+        <p> {{ ad.start_date }} - {{ ad.end_date }}</p>
+        <br>
+        <input type="button" value="View ad" onclick="location.href='{% url 'view_ad' ad.id %}'">
+
+    </li>
+</ul>
+
+<br>
+{% endfor %}
+{% else %}
+There are no ads with these parameters
+{% endif %}
+</body>
+{% endblock %}

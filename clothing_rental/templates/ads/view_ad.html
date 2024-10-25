@@ -1,0 +1,33 @@
+{% extends 'back.html' %}
+{% block extend_title %}
+<title>{{ ad.name }}</title>
+{% endblock %}
+{% block back %}
+<body>
+    <li>
+        <p> {{ ad.name }}</p>
+        <p><img src="{{ ad.image.url }}" style="width:400px;height:400px;"></p>
+        <p> $ {{ ad.price }}</p>
+        <p> {{ ad.description }}</p>
+        <p> {{ ad.start_date }} - {{ ad.end_date }}</p>
+        <p> Phone: {{ ad.phone }}</p>
+        <br>
+        <input type="button" value="Order" onclick="location.href='{% url 'order_ad' ad.id %}'">
+    </li>
+<br>
+<form enctype="multipart/form-data" method="post" >
+    {% csrf_token %}
+    {{ comment_form.as_p }}
+    <input type="submit" value="Post comment">
+</form>
+{% if comments %}
+{% for comment in comments %}
+<ul>
+    <li>
+        {{ comment.user }} - {{ comment.comment }}
+    </li>
+</ul>
+    {% endfor %}
+{% endif %}
+</body>
+{% endblock %}

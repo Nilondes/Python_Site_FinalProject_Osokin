@@ -1,0 +1,23 @@
+{% extends 'back.html' %}
+{% block extend_title %}
+<title>Approve comment</title>
+{% endblock %}
+{% block back %}
+<body>
+{% if comments %}
+{% for comment in comments %}
+<ul>
+    <li>
+        <p> {{ comment.user }}</p>
+        <p> {{ comment.created_at }}</p>
+        <p> {{ comment.comment }}</p>
+    </li>
+</ul>
+<input type="button" value="Approve" onclick="location.href='{% url 'approve_comment' comment.id %}'">
+<br>
+{% endfor %}
+{% else %}
+There are no pending comments
+{% endif %}
+</body>
+{% endblock %}

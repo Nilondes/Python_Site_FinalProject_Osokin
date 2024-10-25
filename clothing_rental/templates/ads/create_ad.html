@@ -1,13 +1,14 @@
 {% extends 'back.html' %}
 {% block extend_title %}
-<title>Register</title>
+<title>Create ad</title>
 {% endblock %}
 {% block back %}
 <body>
-  <form method="post">
+<h1>Create ad</h1>
+<form enctype="multipart/form-data" method="post" >
     {% csrf_token %}
     {{ form.as_p }}
-    <input type="submit" value="Register">
-  </form>
+    <input type="submit" value="Save">
+</form>
 </body>
 {% endblock %}
