@@ -1,9 +1,11 @@
 # Python_Site_FinalProject_Osokin
 
-Дипломный проект: Веб-сайт для аренды одежды
+Django app for clothes rental.
 
-Имя Фамилия — Константин Осокин
+Features:
 
-логин на GitHub — Nilondes
-
-e-mail — oxygen93@ya.ru
+- Authentification for different roles (users/moderators);
+- Ability to post, edit and delete ads with the picture, price and description
+- Ability to search for the ad by price and key words in ad name or description
+- Ability to post comments for ads
+- All ads and comments will be visible only after moderator approval
